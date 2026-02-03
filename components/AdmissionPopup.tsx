@@ -15,7 +15,7 @@ export default function AdmissionPopup() {
 
   // If file is: public/image/logo.jpg  -> use "/image/logo.jpg"
   // If file is: public/images/logo.jpg -> use "/images/logo.jpg"
-  const LOGO_SRC = "/image/logo.jpg";
+  const LOGO_SRC = "/images/logo.jpg";
 
   // Show after delay on every refresh
   const SHOW_AFTER_MS = 3000;
