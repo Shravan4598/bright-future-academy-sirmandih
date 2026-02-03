@@ -85,69 +85,75 @@ export default function AdmissionPopup() {
               ✕
             </button>
 
-            <div style={headerRow}>
-              <div style={logoWrap}>
-                <img
-                  src={LOGO_SRC}
-                  alt={`${SCHOOL_NAME} Logo`}
-                  style={logoImg}
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).style.display = "none";
-                  }}
-                />
-                <div style={logoFallback}>BFA</div>
+            {/* IMPORTANT: scrolling moved inside, so ✕ never gets clipped */}
+            <div style={cardBody}>
+              <div style={headerRow}>
+                <div style={logoWrap}>
+                  <img
+                    src={LOGO_SRC}
+                    alt={`${SCHOOL_NAME} Logo`}
+                    style={logoImg}
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).style.display =
+                        "none";
+                    }}
+                  />
+                  <div style={logoFallback}>BFA</div>
+                </div>
+
+                <div style={{ textAlign: "left" }}>
+                  <div style={schoolName}>{SCHOOL_NAME}</div>
+                  <div style={slogan}>{SLOGAN}</div>
+                </div>
               </div>
 
-              <div style={{ textAlign: "left" }}>
-                <div style={schoolName}>{SCHOOL_NAME}</div>
-                <div style={slogan}>{SLOGAN}</div>
+              <div style={badgesRow}>
+                <span style={badgePrimary}>{HEADLINE}</span>
+                <span style={badgeSoft}>Updated: {todayLabel}</span>
+              </div>
+
+              <h2 style={title}>{SESSION}</h2>
+
+              <div style={infoGrid}>
+                <div style={infoPill}>
+                  <IconCalendar />
+                  <span>
+                    <strong>Dates:</strong> {DATE_RANGE}
+                  </span>
+                </div>
+
+                <div style={infoPill}>
+                  <IconBook />
+                  <span>
+                    <strong>Classes:</strong> {CLASSES}
+                  </span>
+                </div>
+
+                <div style={infoPill}>
+                  <IconStar />
+                  <span>{NOTE}</span>
+                </div>
+              </div>
+
+              <div style={btnRow}>
+                <a href="#contact" style={btnPrimary}>
+                  Enquiry Form
+                </a>
+
+                <a
+                  href={WHATSAPP_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={btnWhatsapp}
+                >
+                  WhatsApp Now
+                </a>
+              </div>
+
+              <div style={footerNote}>
+                Refresh the page to see this popup again.
               </div>
             </div>
-
-            <div style={badgesRow}>
-              <span style={badgePrimary}>{HEADLINE}</span>
-              <span style={badgeSoft}>Updated: {todayLabel}</span>
-            </div>
-
-            <h2 style={title}>{SESSION}</h2>
-
-            <div style={infoGrid}>
-              <div style={infoPill}>
-                <IconCalendar />
-                <span>
-                  <strong>Dates:</strong> {DATE_RANGE}
-                </span>
-              </div>
-
-              <div style={infoPill}>
-                <IconBook />
-                <span>
-                  <strong>Classes:</strong> {CLASSES}
-                </span>
-              </div>
-
-              <div style={infoPill}>
-                <IconStar />
-                <span>{NOTE}</span>
-              </div>
-            </div>
-
-            <div style={btnRow}>
-              <a href="#contact" style={btnPrimary}>
-                Enquiry Form
-              </a>
-
-              <a
-                href={WHATSAPP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={btnWhatsapp}
-              >
-                WhatsApp Now
-              </a>
-            </div>
-
-            <div style={footerNote}>Refresh the page to see this popup again.</div>
           </motion.div>
         </motion.div>
       )}
@@ -160,7 +166,13 @@ export default function AdmissionPopup() {
 
 function IconCalendar() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
       <path
         d="M7 2v3M17 2v3M3.5 9.5h17M6 6h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"
         stroke="currentColor"
@@ -173,7 +185,13 @@ function IconCalendar() {
 
 function IconBook() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
       <path
         d="M4.5 5.5A2.5 2.5 0 0 1 7 3h13v17H7a2.5 2.5 0 0 0-2.5 2.5V5.5Z"
         stroke="currentColor"
@@ -192,7 +210,13 @@ function IconBook() {
 
 function IconStar() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
       <path
         d="M12 3l2.7 5.7 6.3.9-4.6 4.5 1.1 6.4L12 17.8 6.5 20.5l1.1-6.4L3 9.6l6.3-.9L12 3Z"
         stroke="currentColor"
@@ -222,11 +246,10 @@ const overlay: React.CSSProperties = {
 
 const card: React.CSSProperties = {
   position: "relative",
-  width: "min(420px, calc(100vw - 32px))", // guarantees room on both sides
+  width: "min(420px, calc(100vw - 32px))",
   maxHeight: "90vh",
-  overflowY: "auto",
+  overflow: "visible", // IMPORTANT: prevents ✕ from being clipped
   borderRadius: 20,
-  padding: "18px 18px 14px 14px", // extra right padding for ✕
   color: "#EAF6FF",
   background: "linear-gradient(135deg,#071b2e 0%, #083a5c 45%, #0a7a7c 100%)",
   boxShadow: "0 40px 120px rgba(0,0,0,.65)",
@@ -235,19 +258,35 @@ const card: React.CSSProperties = {
   boxSizing: "border-box",
 };
 
+const cardBody: React.CSSProperties = {
+  maxHeight: "90vh",
+  overflowY: "auto", // scrolling here
+  borderRadius: 20,
+  padding: "18px 18px 14px 14px",
+  paddingRight: 60, // space for ✕ so it never overlaps content
+  boxSizing: "border-box",
+};
+
 const closeBtn: React.CSSProperties = {
   position: "absolute",
-  top: 12,
-  right: 12,
-  background: "rgba(255,255,255,.12)",
-  border: "1px solid rgba(255,255,255,.18)",
-  color: "white",
-  width: 36,
-  height: 36,
-  borderRadius: 10,
+  top: 10,
+  right: 10,
+  width: 42,
+  height: 42,
+  borderRadius: 12,
   cursor: "pointer",
-  fontSize: 16,
-  zIndex: 3,
+  zIndex: 50,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  background: "rgba(255,255,255,.28)",
+  border: "2px solid rgba(255,255,255,.38)",
+  color: "#fff",
+  fontSize: 20,
+  fontWeight: 900,
+  lineHeight: 1,
+  boxShadow: "0 8px 18px rgba(0,0,0,.35)",
+  textShadow: "0 1px 2px rgba(0,0,0,.55)",
 };
 
 const glowTop: React.CSSProperties = {
@@ -274,7 +313,6 @@ const headerRow: React.CSSProperties = {
   display: "flex",
   gap: 12,
   alignItems: "center",
-  paddingRight: 44, // IMPORTANT: creates room so ✕ never overlaps header
 };
 
 const logoWrap: React.CSSProperties = {
