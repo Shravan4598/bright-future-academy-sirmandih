@@ -15,7 +15,7 @@ export default function AdmissionPopup() {
 
   // If file is: public/image/logo.jpg  -> use "/image/logo.jpg"
   // If file is: public/images/logo.jpg -> use "/images/logo.jpg"
-  const LOGO_SRC = "/images/logo.jpg";
+  const LOGO_SRC = "/image/logo.jpg";
 
   // Show after delay on every refresh
   const SHOW_AFTER_MS = 3000;
@@ -81,7 +81,13 @@ export default function AdmissionPopup() {
           role="dialog"
         >
           <motion.div
-            style={card} // removed any alignSelf override so it centers
+            // On narrow screens keep perfectly centered; on wider screens shift left by 0.8cm
+            style={{
+              ...card,
+              transform: isNarrow
+                ? card.transform ?? undefined
+                : "translateX(-0.8cm)",
+            }}
             initial={{ y: -10, scale: 0.98, opacity: 0 }}
             animate={{ y: 0, scale: 1, opacity: 1 }}
             exit={{ y: -10, scale: 0.98, opacity: 0 }}
@@ -260,6 +266,7 @@ const card: React.CSSProperties = {
   boxShadow: "0 40px 120px rgba(0,0,0,.65)",
   border: "1px solid rgba(255,255,255,.10)",
   WebkitOverflowScrolling: "touch",
+  // default transform left shift will be applied inline so we keep no static transform here
 };
 
 const glowTop: React.CSSProperties = {
