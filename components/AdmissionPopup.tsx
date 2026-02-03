@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 
 export default function AdmissionPopup() {
@@ -58,7 +57,7 @@ export default function AdmissionPopup() {
 
   if (!mounted) return null;
 
-  return createPortal(
+  return (
     <AnimatePresence>
       {open && (
         <motion.div
@@ -85,7 +84,7 @@ export default function AdmissionPopup() {
               ✕
             </button>
 
-            {/* IMPORTANT: scrolling moved inside, so ✕ never gets clipped */}
+            {/* scrolling moved inside, so ✕ never clips */}
             <div style={cardBody}>
               <div style={headerRow}>
                 <div style={logoWrap}>
@@ -157,8 +156,7 @@ export default function AdmissionPopup() {
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>,
-    document.body
+    </AnimatePresence>
   );
 }
 
@@ -166,13 +164,7 @@ export default function AdmissionPopup() {
 
 function IconCalendar() {
   return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-    >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
         d="M7 2v3M17 2v3M3.5 9.5h17M6 6h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"
         stroke="currentColor"
@@ -185,13 +177,7 @@ function IconCalendar() {
 
 function IconBook() {
   return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-    >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
         d="M4.5 5.5A2.5 2.5 0 0 1 7 3h13v17H7a2.5 2.5 0 0 0-2.5 2.5V5.5Z"
         stroke="currentColor"
@@ -210,13 +196,7 @@ function IconBook() {
 
 function IconStar() {
   return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-    >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
         d="M12 3l2.7 5.7 6.3.9-4.6 4.5 1.1 6.4L12 17.8 6.5 20.5l1.1-6.4L3 9.6l6.3-.9L12 3Z"
         stroke="currentColor"
@@ -248,7 +228,7 @@ const card: React.CSSProperties = {
   position: "relative",
   width: "min(420px, calc(100vw - 32px))",
   maxHeight: "90vh",
-  overflow: "visible", // IMPORTANT: prevents ✕ from being clipped
+  overflow: "visible", // IMPORTANT: prevents ✕ clipping
   borderRadius: 20,
   color: "#EAF6FF",
   background: "linear-gradient(135deg,#071b2e 0%, #083a5c 45%, #0a7a7c 100%)",
@@ -260,10 +240,10 @@ const card: React.CSSProperties = {
 
 const cardBody: React.CSSProperties = {
   maxHeight: "90vh",
-  overflowY: "auto", // scrolling here
+  overflowY: "auto",
   borderRadius: 20,
   padding: "18px 18px 14px 14px",
-  paddingRight: 60, // space for ✕ so it never overlaps content
+  paddingRight: 60, // space for ✕
   boxSizing: "border-box",
 };
 
