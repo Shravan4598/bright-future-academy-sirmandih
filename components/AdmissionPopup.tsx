@@ -81,7 +81,7 @@ export default function AdmissionPopup() {
           role="dialog"
         >
           <motion.div
-            style={{ ...card, alignSelf: isNarrow ? "center" : "flex-start" }}
+            style={card} // removed any alignSelf override so it centers
             initial={{ y: -10, scale: 0.98, opacity: 0 }}
             animate={{ y: 0, scale: 1, opacity: 1 }}
             exit={{ y: -10, scale: 0.98, opacity: 0 }}
@@ -239,7 +239,7 @@ const overlay: React.CSSProperties = {
   backdropFilter: "blur(10px)",
   display: "flex",
   justifyContent: "center",
-  alignItems: "center", // center vertically; card switches alignSelf based on isNarrow
+  alignItems: "center", // centers vertically and horizontally
   zIndex: 999999,
   paddingLeft: "max(12px, env(safe-area-inset-left))",
   paddingRight: "max(12px, env(safe-area-inset-right))",
