@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 
 export default function AdmissionPopup() {
@@ -12,12 +13,7 @@ export default function AdmissionPopup() {
   const DATE_RANGE = "23 Jan 2026 – 30 Apr 2026";
   const CLASSES = "Nursery to Class 10";
   const NOTE = "Limited seats available • Affordable fees • Safe campus";
-
-  // If file is: public/image/logo.jpg  -> use "/image/logo.jpg"
-  // If file is: public/images/logo.jpg -> use "/images/logo.jpg"
-  const LOGO_SRC = "/images/logo.jpg";
-
-  // Show after delay on every refresh
+  const LOGO_SRC = "/image/logo.jpg";
   const SHOW_AFTER_MS = 3000;
 
   const WHATSAPP_LINK =
@@ -25,9 +21,7 @@ export default function AdmissionPopup() {
   // ===========================
 
   const [open, setOpen] = useState(false);
-  const [isNarrow, setIsNarrow] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 576 : false
-  );
+  const [mounted, setMounted] = useState(false);
 
   const todayLabel = useMemo(() => {
     const d = new Date();
@@ -38,12 +32,13 @@ export default function AdmissionPopup() {
     });
   }, []);
 
-  // ✅ Opens on every refresh (no localStorage)
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setOpen(true);
-    }, SHOW_AFTER_MS);
+    setMounted(true);
+  }, []);
 
+  // Opens on every refresh
+  useEffect(() => {
+    const timer = window.setTimeout(() => setOpen(true), SHOW_AFTER_MS);
     return () => window.clearTimeout(timer);
   }, []);
 
@@ -59,19 +54,11 @@ export default function AdmissionPopup() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open]);
 
-  // listen for resize to update layout responsiveness
-  useEffect(() => {
-    const onResize = () => setIsNarrow(window.innerWidth < 576);
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
   const close = () => setOpen(false);
 
-  // pixel shift to move card left so close button stays visible
-  const LEFT_SHIFT_PX = -48; // change this value if you want more/less shift
+  if (!mounted) return null;
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {open && (
         <motion.div
@@ -84,11 +71,7 @@ export default function AdmissionPopup() {
           role="dialog"
         >
           <motion.div
-            // On narrow screens keep perfectly centered; on wider screens shift left by LEFT_SHIFT_PX
-            style={{
-              ...card,
-              transform: isNarrow ? undefined : `translateX(${LEFT_SHIFT_PX}px)`,
-            }}
+            style={card}
             initial={{ y: -10, scale: 0.98, opacity: 0 }}
             animate={{ y: 0, scale: 1, opacity: 1 }}
             exit={{ y: -10, scale: 0.98, opacity: 0 }}
@@ -149,8 +132,8 @@ export default function AdmissionPopup() {
               </div>
             </div>
 
-            <div style={{ ...btnRow, flexDirection: isNarrow ? "column" : "row" }}>
-              <a href="#contact" style={{ ...btnPrimary, minWidth: isNarrow ? "100%" : 150 }}>
+            <div style={btnRow}>
+              <a href="#contact" style={btnPrimary}>
                 Enquiry Form
               </a>
 
@@ -158,7 +141,7 @@ export default function AdmissionPopup() {
                 href={WHATSAPP_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ ...btnWhatsapp, minWidth: isNarrow ? "100%" : 150 }}
+                style={btnWhatsapp}
               >
                 WhatsApp Now
               </a>
@@ -168,7 +151,8 @@ export default function AdmissionPopup() {
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
 
@@ -176,13 +160,7 @@ export default function AdmissionPopup() {
 
 function IconCalendar() {
   return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-    >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
         d="M7 2v3M17 2v3M3.5 9.5h17M6 6h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"
         stroke="currentColor"
@@ -195,13 +173,7 @@ function IconCalendar() {
 
 function IconBook() {
   return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-    >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
         d="M4.5 5.5A2.5 2.5 0 0 1 7 3h13v17H7a2.5 2.5 0 0 0-2.5 2.5V5.5Z"
         stroke="currentColor"
@@ -220,13 +192,7 @@ function IconBook() {
 
 function IconStar() {
   return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-    >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
         d="M12 3l2.7 5.7 6.3.9-4.6 4.5 1.1 6.4L12 17.8 6.5 20.5l1.1-6.4L3 9.6l6.3-.9L12 3Z"
         stroke="currentColor"
@@ -246,27 +212,42 @@ const overlay: React.CSSProperties = {
   backdropFilter: "blur(10px)",
   display: "flex",
   justifyContent: "center",
-  alignItems: "center", // centers vertically and horizontally
+  alignItems: "center",
   zIndex: 999999,
-  paddingLeft: "max(12px, env(safe-area-inset-left))",
-  paddingRight: "max(12px, env(safe-area-inset-right))",
+  paddingLeft: "max(16px, env(safe-area-inset-left))",
+  paddingRight: "max(16px, env(safe-area-inset-right))",
   paddingTop: "max(16px, env(safe-area-inset-top))",
   paddingBottom: "max(16px, env(safe-area-inset-bottom))",
 };
 
 const card: React.CSSProperties = {
   position: "relative",
-  width: "min(420px, 90vw)", // responsive width
-  maxWidth: "100%",
-  maxHeight: "90vh", // ensure it never overflows the viewport height
-  overflowY: "auto", // allow internal scrolling if content is tall
+  width: "min(420px, calc(100vw - 32px))", // guarantees room on both sides
+  maxHeight: "90vh",
+  overflowY: "auto",
   borderRadius: 20,
-  padding: "16px 18px 14px 14px", // extra right padding to ensure close button visible
+  padding: "18px 18px 14px 14px", // extra right padding for ✕
   color: "#EAF6FF",
   background: "linear-gradient(135deg,#071b2e 0%, #083a5c 45%, #0a7a7c 100%)",
   boxShadow: "0 40px 120px rgba(0,0,0,.65)",
   border: "1px solid rgba(255,255,255,.10)",
   WebkitOverflowScrolling: "touch",
+  boxSizing: "border-box",
+};
+
+const closeBtn: React.CSSProperties = {
+  position: "absolute",
+  top: 12,
+  right: 12,
+  background: "rgba(255,255,255,.12)",
+  border: "1px solid rgba(255,255,255,.18)",
+  color: "white",
+  width: 36,
+  height: 36,
+  borderRadius: 10,
+  cursor: "pointer",
+  fontSize: 16,
+  zIndex: 3,
 };
 
 const glowTop: React.CSSProperties = {
@@ -289,26 +270,11 @@ const glowBottom: React.CSSProperties = {
   pointerEvents: "none",
 };
 
-const closeBtn: React.CSSProperties = {
-  position: "absolute",
-  top: 8,
-  right: 10,
-  background: "rgba(255,255,255,.10)",
-  border: "1px solid rgba(255,255,255,.15)",
-  color: "white",
-  width: 34,
-  height: 34,
-  borderRadius: 10,
-  cursor: "pointer",
-  fontSize: 16,
-  zIndex: 2,
-};
-
 const headerRow: React.CSSProperties = {
   display: "flex",
   gap: 12,
   alignItems: "center",
-  paddingRight: 28, // reduced to avoid overflow on small screens
+  paddingRight: 44, // IMPORTANT: creates room so ✕ never overlaps header
 };
 
 const logoWrap: React.CSSProperties = {
@@ -341,12 +307,12 @@ const logoFallback: React.CSSProperties = {
 const schoolName: React.CSSProperties = {
   fontWeight: 900,
   letterSpacing: ".02em",
-  fontSize: "clamp(14px, 4vw, 16px)", // responsive
+  fontSize: "clamp(14px, 4vw, 16px)",
   lineHeight: 1.15,
 };
 
 const slogan: React.CSSProperties = {
-  fontSize: "clamp(11px, 3.5vw, 12.5px)", // responsive
+  fontSize: "clamp(11px, 3.5vw, 12.5px)",
   opacity: 0.85,
   marginTop: 2,
 };
