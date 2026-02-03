@@ -68,6 +68,9 @@ export default function AdmissionPopup() {
 
   const close = () => setOpen(false);
 
+  // pixel shift to move card left so close button stays visible
+  const LEFT_SHIFT_PX = -48; // change this value if you want more/less shift
+
   return (
     <AnimatePresence>
       {open && (
@@ -81,12 +84,10 @@ export default function AdmissionPopup() {
           role="dialog"
         >
           <motion.div
-            // On narrow screens keep perfectly centered; on wider screens shift left by 0.8cm
+            // On narrow screens keep perfectly centered; on wider screens shift left by LEFT_SHIFT_PX
             style={{
               ...card,
-              transform: isNarrow
-                ? card.transform ?? undefined
-                : "translateX(-0.8cm)",
+              transform: isNarrow ? undefined : `translateX(${LEFT_SHIFT_PX}px)`,
             }}
             initial={{ y: -10, scale: 0.98, opacity: 0 }}
             animate={{ y: 0, scale: 1, opacity: 1 }}
@@ -260,13 +261,12 @@ const card: React.CSSProperties = {
   maxHeight: "90vh", // ensure it never overflows the viewport height
   overflowY: "auto", // allow internal scrolling if content is tall
   borderRadius: 20,
-  padding: "16px 14px 14px", // slightly reduced padding
+  padding: "16px 18px 14px 14px", // extra right padding to ensure close button visible
   color: "#EAF6FF",
   background: "linear-gradient(135deg,#071b2e 0%, #083a5c 45%, #0a7a7c 100%)",
   boxShadow: "0 40px 120px rgba(0,0,0,.65)",
   border: "1px solid rgba(255,255,255,.10)",
   WebkitOverflowScrolling: "touch",
-  // default transform left shift will be applied inline so we keep no static transform here
 };
 
 const glowTop: React.CSSProperties = {
@@ -301,6 +301,7 @@ const closeBtn: React.CSSProperties = {
   borderRadius: 10,
   cursor: "pointer",
   fontSize: 16,
+  zIndex: 2,
 };
 
 const headerRow: React.CSSProperties = {
