@@ -31,9 +31,7 @@ export default function AdmissionPopup() {
     });
   }, []);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => setMounted(true), []);
 
   // Opens on every refresh
   useEffect(() => {
@@ -80,12 +78,19 @@ export default function AdmissionPopup() {
             <div style={glowTop} />
             <div style={glowBottom} />
 
-            <button onClick={close} style={closeBtn} aria-label="Close popup">
-              ✕
-            </button>
-
-            {/* scrolling moved inside, so ✕ never clips */}
+            {/* Scroll is inside, and close button is sticky (best for Chrome mobile) */}
             <div style={cardBody}>
+              <div style={closeBar}>
+                <button
+                  type="button"
+                  onClick={close}
+                  style={closeBtn}
+                  aria-label="Close popup"
+                >
+                  ✕
+                </button>
+              </div>
+
               <div style={headerRow}>
                 <div style={logoWrap}>
                   <img
@@ -164,7 +169,13 @@ export default function AdmissionPopup() {
 
 function IconCalendar() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
       <path
         d="M7 2v3M17 2v3M3.5 9.5h17M6 6h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"
         stroke="currentColor"
@@ -177,7 +188,13 @@ function IconCalendar() {
 
 function IconBook() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
       <path
         d="M4.5 5.5A2.5 2.5 0 0 1 7 3h13v17H7a2.5 2.5 0 0 0-2.5 2.5V5.5Z"
         stroke="currentColor"
@@ -196,7 +213,13 @@ function IconBook() {
 
 function IconStar() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
       <path
         d="M12 3l2.7 5.7 6.3.9-4.6 4.5 1.1 6.4L12 17.8 6.5 20.5l1.1-6.4L3 9.6l6.3-.9L12 3Z"
         stroke="currentColor"
@@ -228,7 +251,7 @@ const card: React.CSSProperties = {
   position: "relative",
   width: "min(420px, calc(100vw - 32px))",
   maxHeight: "90vh",
-  overflow: "visible", // IMPORTANT: prevents ✕ clipping
+  overflow: "hidden", // card clips body nicely; close button is inside body (sticky)
   borderRadius: 20,
   color: "#EAF6FF",
   background: "linear-gradient(135deg,#071b2e 0%, #083a5c 45%, #0a7a7c 100%)",
@@ -242,31 +265,39 @@ const cardBody: React.CSSProperties = {
   maxHeight: "90vh",
   overflowY: "auto",
   borderRadius: 20,
-  padding: "18px 18px 14px 14px",
-  paddingRight: 60, // space for ✕
+  padding: "14px",
   boxSizing: "border-box",
 };
 
+const closeBar: React.CSSProperties = {
+  position: "sticky",
+  top: 0,
+  zIndex: 100,
+  display: "flex",
+  justifyContent: "flex-end",
+  padding: "6px 6px 10px 6px",
+  background: "linear-gradient(180deg, rgba(7,27,46,.92), rgba(7,27,46,0))",
+  backdropFilter: "blur(6px)", // good support in Chrome
+};
+
 const closeBtn: React.CSSProperties = {
-  position: "absolute",
-  top: 10,
-  right: 10,
-  width: 42,
-  height: 42,
+  width: 44,
+  height: 44,
   borderRadius: 12,
   cursor: "pointer",
-  zIndex: 50,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  background: "rgba(255,255,255,.28)",
-  border: "2px solid rgba(255,255,255,.38)",
-  color: "#fff",
-  fontSize: 20,
+
+  background: "rgba(255,255,255,.95)", // high contrast on mobile
+  border: "2px solid rgba(0,0,0,.12)",
+  color: "#0b1f2a",
+
+  fontSize: 22,
   fontWeight: 900,
   lineHeight: 1,
-  boxShadow: "0 8px 18px rgba(0,0,0,.35)",
-  textShadow: "0 1px 2px rgba(0,0,0,.55)",
+
+  boxShadow: "0 10px 24px rgba(0,0,0,.35)",
 };
 
 const glowTop: React.CSSProperties = {
