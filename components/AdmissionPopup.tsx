@@ -12,7 +12,7 @@ export default function AdmissionPopup() {
   const DATE_RANGE = "23 Jan 2026 – 30 Apr 2026";
   const CLASSES = "Nursery to Class 10";
   const NOTE = "Limited seats available • Affordable fees • Safe campus";
-  const LOGO_SRC = "/image/logo.jpg";
+  const LOGO_SRC = "/images/logo.jpg";
   const SHOW_AFTER_MS = 3000;
 
   const WHATSAPP_LINK =

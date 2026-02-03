@@ -11,14 +11,10 @@ import Location from "@/components/Location";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import Credits from "@/components/Credits";
-import AdmissionPopup from "@/components/AdmissionPopup";
 
 export default function Page() {
   return (
     <>
-      {/* ✅ Keep popup at the top of the tree */}
-      <AdmissionPopup />
-
       <Navbar />
       <main>
         <Hero />
