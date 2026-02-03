@@ -15,7 +15,7 @@ export default function AdmissionPopup() {
 
   // If file is: public/image/logo.jpg  -> use "/image/logo.jpg"
   // If file is: public/images/logo.jpg -> use "/images/logo.jpg"
-  const LOGO_SRC = "/image/logo.jpg";
+  const LOGO_SRC = "/images/logo.jpg";
 
   // Show after delay on every refresh
   const SHOW_AFTER_MS = 3000;
@@ -25,6 +25,9 @@ export default function AdmissionPopup() {
   // ===========================
 
   const [open, setOpen] = useState(false);
+  const [isNarrow, setIsNarrow] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 576 : false
+  );
 
   const todayLabel = useMemo(() => {
     const d = new Date();
@@ -44,6 +47,7 @@ export default function AdmissionPopup() {
     return () => window.clearTimeout(timer);
   }, []);
 
+  // close on Escape
   useEffect(() => {
     if (!open) return;
 
@@ -54,6 +58,13 @@ export default function AdmissionPopup() {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open]);
+
+  // listen for resize to update layout responsiveness
+  useEffect(() => {
+    const onResize = () => setIsNarrow(window.innerWidth < 576);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   const close = () => setOpen(false);
 
@@ -70,7 +81,7 @@ export default function AdmissionPopup() {
           role="dialog"
         >
           <motion.div
-            style={card}
+            style={{ ...card, alignSelf: isNarrow ? "center" : "flex-start" }}
             initial={{ y: -10, scale: 0.98, opacity: 0 }}
             animate={{ y: 0, scale: 1, opacity: 1 }}
             exit={{ y: -10, scale: 0.98, opacity: 0 }}
@@ -131,8 +142,8 @@ export default function AdmissionPopup() {
               </div>
             </div>
 
-            <div style={btnRow}>
-              <a href="#contact" style={btnPrimary}>
+            <div style={{ ...btnRow, flexDirection: isNarrow ? "column" : "row" }}>
+              <a href="#contact" style={{ ...btnPrimary, minWidth: isNarrow ? "100%" : 150 }}>
                 Enquiry Form
               </a>
 
@@ -140,15 +151,13 @@ export default function AdmissionPopup() {
                 href={WHATSAPP_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={btnWhatsapp}
+                style={{ ...btnWhatsapp, minWidth: isNarrow ? "100%" : 150 }}
               >
                 WhatsApp Now
               </a>
             </div>
 
-            <div style={footerNote}>
-              Refresh the page to see this popup again.
-            </div>
+            <div style={footerNote}>Refresh the page to see this popup again.</div>
           </motion.div>
         </motion.div>
       )}
@@ -230,50 +239,53 @@ const overlay: React.CSSProperties = {
   backdropFilter: "blur(10px)",
   display: "flex",
   justifyContent: "center",
-  alignItems: "flex-start",
-  paddingTop: 90,
+  alignItems: "center", // center vertically; card switches alignSelf based on isNarrow
   zIndex: 999999,
-  paddingLeft: 16,
-  paddingRight: 16,
+  paddingLeft: "max(12px, env(safe-area-inset-left))",
+  paddingRight: "max(12px, env(safe-area-inset-right))",
+  paddingTop: "max(16px, env(safe-area-inset-top))",
+  paddingBottom: "max(16px, env(safe-area-inset-bottom))",
 };
 
 const card: React.CSSProperties = {
   position: "relative",
-  width: 420,
+  width: "min(420px, 90vw)", // responsive width
   maxWidth: "100%",
+  maxHeight: "90vh", // ensure it never overflows the viewport height
+  overflowY: "auto", // allow internal scrolling if content is tall
   borderRadius: 20,
-  padding: "20px 18px 16px",
+  padding: "16px 14px 14px", // slightly reduced padding
   color: "#EAF6FF",
   background: "linear-gradient(135deg,#071b2e 0%, #083a5c 45%, #0a7a7c 100%)",
   boxShadow: "0 40px 120px rgba(0,0,0,.65)",
-  overflow: "hidden",
   border: "1px solid rgba(255,255,255,.10)",
+  WebkitOverflowScrolling: "touch",
 };
 
 const glowTop: React.CSSProperties = {
   position: "absolute",
-  top: -140,
-  left: -120,
-  width: 260,
-  height: 260,
+  top: -120,
+  left: -100,
+  width: 240,
+  height: 240,
   background: "radial-gradient(circle, rgba(22,224,194,.35), transparent 60%)",
   pointerEvents: "none",
 };
 
 const glowBottom: React.CSSProperties = {
   position: "absolute",
-  bottom: -160,
-  right: -140,
-  width: 320,
-  height: 320,
+  bottom: -120,
+  right: -100,
+  width: 260,
+  height: 260,
   background: "radial-gradient(circle, rgba(66,135,245,.35), transparent 60%)",
   pointerEvents: "none",
 };
 
 const closeBtn: React.CSSProperties = {
   position: "absolute",
-  top: 10,
-  right: 12,
+  top: 8,
+  right: 10,
   background: "rgba(255,255,255,.10)",
   border: "1px solid rgba(255,255,255,.15)",
   color: "white",
@@ -288,7 +300,7 @@ const headerRow: React.CSSProperties = {
   display: "flex",
   gap: 12,
   alignItems: "center",
-  paddingRight: 44,
+  paddingRight: 28, // reduced to avoid overflow on small screens
 };
 
 const logoWrap: React.CSSProperties = {
@@ -321,21 +333,21 @@ const logoFallback: React.CSSProperties = {
 const schoolName: React.CSSProperties = {
   fontWeight: 900,
   letterSpacing: ".02em",
-  fontSize: 16,
+  fontSize: "clamp(14px, 4vw, 16px)", // responsive
   lineHeight: 1.15,
 };
 
 const slogan: React.CSSProperties = {
-  fontSize: 12.5,
+  fontSize: "clamp(11px, 3.5vw, 12.5px)", // responsive
   opacity: 0.85,
   marginTop: 2,
 };
 
 const badgesRow: React.CSSProperties = {
   display: "flex",
-  gap: 10,
+  gap: 8,
   flexWrap: "wrap",
-  marginTop: 14,
+  marginTop: 12,
   alignItems: "center",
 };
 
@@ -346,7 +358,7 @@ const badgePrimary: React.CSSProperties = {
   textTransform: "uppercase",
   background: "rgba(22,224,194,.20)",
   border: "1px solid rgba(22,224,194,.25)",
-  padding: "7px 10px",
+  padding: "6px 10px",
   borderRadius: 999,
 };
 
@@ -356,13 +368,13 @@ const badgeSoft: React.CSSProperties = {
   opacity: 0.9,
   background: "rgba(255,255,255,.10)",
   border: "1px solid rgba(255,255,255,.14)",
-  padding: "7px 10px",
+  padding: "6px 10px",
   borderRadius: 999,
 };
 
 const title: React.CSSProperties = {
-  margin: "12px 0 12px",
-  fontSize: 22,
+  margin: "10px 0 10px",
+  fontSize: "clamp(18px, 5vw, 22px)",
   lineHeight: 1.1,
 };
 
@@ -381,39 +393,41 @@ const infoPill: React.CSSProperties = {
   background: "rgba(255,255,255,.08)",
   border: "1px solid rgba(255,255,255,.12)",
   color: "#EAF6FF",
-  fontSize: 13.5,
+  fontSize: "clamp(12px, 3.2vw, 13.5px)",
 };
 
 const btnRow: React.CSSProperties = {
   display: "flex",
   gap: 10,
   justifyContent: "center",
-  marginTop: 14,
+  marginTop: 12,
   flexWrap: "wrap",
 };
 
 const btnPrimary: React.CSSProperties = {
-  padding: "11px 14px",
+  padding: "10px 12px",
   borderRadius: 12,
   background: "#16e0c2",
   color: "#003b36",
   textDecoration: "none",
   fontWeight: 900,
-  fontSize: 13,
+  fontSize: "clamp(12px, 2.5vw, 13px)",
   minWidth: 150,
   textAlign: "center",
+  display: "inline-block",
 };
 
 const btnWhatsapp: React.CSSProperties = {
-  padding: "11px 14px",
+  padding: "10px 12px",
   borderRadius: 12,
   background: "#25D366",
   color: "white",
   textDecoration: "none",
   fontWeight: 900,
-  fontSize: 13,
+  fontSize: "clamp(12px, 2.5vw, 13px)",
   minWidth: 150,
   textAlign: "center",
+  display: "inline-block",
 };
 
 const footerNote: React.CSSProperties = {
